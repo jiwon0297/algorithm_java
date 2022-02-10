@@ -1,4 +1,4 @@
-package swea.d3;
+package baekjoon;
 
 import java.util.Scanner;
 
