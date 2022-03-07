@@ -20,7 +20,6 @@ public class Main_1697_숨바꼭질 {
 			return ;
 		}
 		
-		int res = Integer.MAX_VALUE;
 		Queue<Integer> q = new LinkedList<Integer>();
 		visited[N]=1;
 		q.offer(N);
