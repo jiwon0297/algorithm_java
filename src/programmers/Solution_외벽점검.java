@@ -1,75 +1,61 @@
 package programmers;
 
 class Solution_외벽점검 {
-	
-	static int n, answer;
-	static int[] weak, dist;
-	static int[][] weakcases;
-	
-	public int solution(int n, int[] weak, int[] dist) {
-		this.weak=weak;
-		this.dist=dist;
-		this.n=n;
-		answer=Integer.MAX_VALUE;
-		
-		weakcases=new int[weak.length][weak.length];
-		makeWeak();
-		makeDist(new boolean[dist.length], new int[dist.length], 0);
-		
-		return answer==Integer.MAX_VALUE ? -1 : answer;
+
+	static int answer = -1;
+	static int[] spreadWeak;
+	static int weaklen;
+
+	public static int solution(int n, int[] weak, int[] dist) {
+		weaklen = weak.length;
+		spreadWeak = spreadPoint(n, weak);
+		for (int i = 1; i <= dist.length; i++) {
+			perm(0, i, dist, new boolean[dist.length], new int[i]);
+		}
+		return answer;
 	}
 
-	
-	//모든 dist케이스 만들기 
-	private void makeDist(boolean[] visited, int[] distcase, int idx) {
-		if(idx==dist.length) {
-			for(int[] wc : weakcases) {
-				chk(distcase, wc);
-			}
+	private static void perm(int cnt, int idx, int[] dist, boolean[] visited, int[] num) {
+		if (answer != -1) return ;
+		if (cnt == idx) {
+			chk(num);
+			return;
 		}
-		
-		for(int i=0; i<dist.length; i++) {
-			if(!visited[i]) {
-				visited[i]=true;
-				distcase[idx]=dist[i];
-				makeDist(visited, distcase, idx+1);
-				distcase[idx]=0;
-				visited[i]=false;
-			}
+
+		for (int i = 0; i < dist.length; i++) {
+			if (visited[i]) continue;
+			num[cnt] = dist[i];
+			visited[i] = true;
+			perm(cnt + 1, idx, dist, visited, num);
+			visited[i] = false;
 		}
 	}
 
-	
-	//모든 weakcase에 대해 모든 Distcase 검사 
-	private void chk(int[] distcase, int[] weakcase) {
-		int cur=0;
-		int dist_idx=0;
-		int next=0;
-		
-		while(cur<weakcase.length && dist_idx<distcase.length) {
-			next=cur+1;
-			while(next<weakcase.length && weakcase[cur]+distcase[dist_idx] >= weakcase[next]) next++;
-			cur=next;
-			dist_idx++;
+	private static void chk(int[] res) {
+		outer: for (int i = 0; i < weaklen; i++) {
+			int start = i;
+			int f = 0;
+			for (int j = i; j < i + weaklen; j++) {
+				if (spreadWeak[j] - spreadWeak[start] > res[f]) {
+					start = j;
+					f++;
+				}
+				if (f == res.length) continue outer;
+			}
+			answer = res.length;
+			return;
 		}
-	
-		if(cur==weakcase.length && dist_idx<answer) answer=dist_idx;
 	}
 
-	
-	//모든 weak케이스 만들기 
-	private void makeWeak() {
-		int[] tmpweak = this.weak.clone();
-		weakcases[0]=tmpweak.clone();
-		
-		for(int i=1; i<weak.length; i++) {
-			int tmp = tmpweak[0];
-			for(int j=1; j<weak.length; j++) {
-				tmpweak[j-1] = tmpweak[j];
-			}
-			tmpweak[weak.length-1] = tmp+n;
-			weakcases[i]=tmpweak.clone();
+	private static int[] spreadPoint(int n, int[] weak) {
+		int[] spread = new int[weak.length * 2 - 1];
+		for (int i = 0; i < weak.length; i++) {
+			spread[i] = weak[i];
 		}
+		for (int i = 0; i < weak.length - 1; i++) {
+			spread[i + weak.length] = weak[i] + n;
+		}
+		return spread;
 	}
-	
+
 }
