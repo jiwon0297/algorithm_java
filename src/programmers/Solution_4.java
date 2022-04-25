@@ -24,6 +24,7 @@ public class Solution_4 {
 			this.sec = sec;
 		}
 	}
+	
 	public static int[] solution(String s, String[] times) {
         StringTokenizer st = new StringTokenizer(s,":");
         int yy = Integer.parseInt(st.nextToken());
